@@ -25,6 +25,7 @@ name = "cloudflare-docker-proxy"
 [env.production.vars]
 MODE = "production"
 TARGET_UPSTREAM = ""
+DOMAIN = "libcuda.so"
 
 [env.staging]
 name = "cloudflare-docker-proxy-staging"
@@ -33,3 +34,4 @@ name = "cloudflare-docker-proxy-staging"
 [env.staging.vars]
 MODE = "staging"
 TARGET_UPSTREAM = ""
+DOMAIN = "libcuda.so"

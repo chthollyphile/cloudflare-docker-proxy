@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>镜像使用说明</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #2b1724, #050d2d);
+        }
+        .header {
+            background: linear-gradient(135deg, #6d176074, #06011d7a);
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            backdrop-filter: blur(20px);
+        }
+        .github-link {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            color: #fff;
+            text-decoration: none;
+        }
+        .github-icon {
+            width: 24px;
+            height: 24px;
+            vertical-align: middle;
+        }
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #011b1969;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+        .content {
+            margin-bottom: 20px;
+            color: #ffffff;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px 0;
+            background-color: #9b19a923;
+            color: #fff;
+            backdrop-filter: blur(20px);
+        }
+        pre {
+            background-color: #000000ba;
+            color: #f8f8f2;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            backdrop-filter: blur(20px);
+        }
+        code {
+            font-family: 'Source Code Pro', monospace;
+        }
+        a {
+            color: #4CAF50;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        @media (max-width: 600px) {
+            .container {
+                margin: 20px;
+                padding: 15px;
+            }
+            .header {
+                padding: 15px 0;
+            }
+        }
+        .box1 {
+            width: 200px;
+            height: 200px;
+            background-color: #fff;
+            border-radius: 60px;
+            transform: rotate(78deg);
+            position: fixed;
+            margin-top: 20px;
+            margin-left: 100px;
+            z-index: -1;
+            animation: rotate 25s linear infinite; 
+        }
+        .box2 {
+            width: 200px;
+            height: 200px;
+            background-color: #ffffff;
+            transform: rotate(120deg);
+            border-radius: 200px;
+            position: absolute;
+            top: 120px;
+            right: 40px;
+            padding-right: 200px;
+            z-index: -1;
+            animation: rotate 10s linear infinite; 
+        }
+        .box3 {
+            width: 400px;
+            height: 400px;
+            background-color: #ffffff;
+            transform: rotate(3deg);
+            border-radius: 180px;
+            position: fixed;
+            margin-top: 400px;
+            margin-left: 12rem;
+            z-index: -1;
+            animation: rotate 20s linear infinite; 
+        }
+        @keyframes rotate {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Source+Code+Pro:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="header">
+    <h1>镜像使用说明</h1>
+    <a href="https://github.com/lixd/cloudflare-docker-proxy" target="_blank" class="github-link">
+        <img src="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png" alt="GitHub" class="github-icon">
+    </a>
+</div>
+<div class="box1"></div>
+<div class="box2"></div>
+<div class="box3"></div>
+<div class="container">
+    <div class="content">
+        <p>为了加速 Docker 镜像拉取，你可以使用以下命令设置 registry mirror:</p>
+        <pre><code id="registry-config">sudo tee /etc/docker/daemon.json &lt;&lt;EOF
+{
+    "registry-mirrors": ["https://{{host}}"]
+}
+EOF
+# 配置完后需要重启 Docker 服务
+sudo systemctl restart docker
+</code></pre>
+        <p>使用该代理拉取镜像，请参考以下命令：</p>
+        <pre><code id="commands">
+# docker pull nginx:latest
+docker pull reflection.{{host}}/library/nginx:latest  # 拉取 Docker 官方镜像
+
+</code></pre>
+        <p>为了避免 Worker 用量耗尽，你可以手动 pull 镜像然后 re-tag 之后 push 至本地镜像仓库。</p>
+    </div>
+</div>
+<div class="footer">
+    <p>Powered by Cloudflare Workers</p>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const host = window.location.hostname;
+        const mainDomain = host.split('.').slice(-2).join('.');
+        const registryConfigElement = document.getElementById('registry-config');
+        const commandsElement = document.getElementById('commands');
+
+        registryConfigElement.innerHTML = registryConfigElement.innerHTML.replace(/{{host}}/g, host);
+        commandsElement.innerHTML = commandsElement.innerHTML.replace(/{{host}}/g, mainDomain);
+    });
+</script>
+</body>
+</html>
