@@ -4,7 +4,7 @@ addEventListener("fetch", (event) => {
 });
 
 import DOCS from './help.html'
-const dockerHub = "https://registry-1.docker.io";
+const dockerHub = "https://index.docker.io";
 const domain = globalThis.DOMAIN || "libcuda.so";
 
 const routes = {
